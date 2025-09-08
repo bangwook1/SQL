@@ -88,7 +88,7 @@ ERD를 확인한다
 # 2️⃣ 학습 인증란
 <!-- 이 글을 지우고, 여기에 학습한 것을 인증해주세요.-->
 
-![pic](C:/Users/bang_angry/Desktop/다트비/SQL/week1.jpg)
+![pic](image/week1.jpg)
 <br>
 <br>
 
