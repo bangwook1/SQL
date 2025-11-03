@@ -59,15 +59,15 @@
 ~~~
 
 CURRENT_DATETIME : 현재 DATETIME 출력
-ex) CURRENT_DATE("Asia/Seoul")AS asia_date #asia_date로 현재시간 출력
-DATETIME - EXTRACT(patr FRRM datetime_expression)
-EXTRACT(DATE FROM DATETIME"2024-01-02 14:00:00")AS date 
+ex) CURRENT_DATE("Asia/Seoul")AS asia_date #asia_date로 현재시간 출력<br>
+DATETIME - EXTRACT(patr FRRM datetime_expression)<br>
+EXTRACT(DATE FROM DATETIME"2024-01-02 14:00:00")AS date <br>
 요일 - EXTRACT(DAYOFWEEK FROM datetime_col) 1-7의 값 반환
-DATE와 HOUR만 남기기
-DATETIME_TRUNC(datetime_col, DAY/YEAR/MONTH/HOUR) 일자/연도/월/일만 자르기
-DATE가 문자열로 저장된 경우가 있으므로 유의할것
-PARSE_DATETIME('%Y-%m-%d %H:%M:%S', '2024-01-11 12:35:35') AS parse_datetime;
-FORMAT_DATETIME("%c", DATETIME "2024-01-11 12:35:35") AS formatted;
+DATE와 HOUR만 남기기<br>
+DATETIME_TRUNC(datetime_col, DAY/YEAR/MONTH/HOUR) 일자/연도/월/일만 자르기<br>
+DATE가 문자열로 저장된 경우가 있으므로 유의할것<br>
+PARSE_DATETIME('%Y-%m-%d %H:%M:%S', '2024-01-11 12:35:35') AS parse_datetime;<br>
+FORMAT_DATETIME("%c", DATETIME "2024-01-11 12:35:35") AS formatted;<br>
 LAST_DAY(DATETIME '2024-01-03 15:30:00') AS last_day
 DATETIME_DIFF(first_datetime, second_datetime, DAY/MONTH/WEEK) AS day_diff1
 
@@ -148,12 +148,33 @@ ORDER BY
 
 
 3. 각 포켓몬의 총점(total)을 기준으로 300이하면 Low, 301에서 500사이면 medium, 501이상이면 high로 분류
+SELECT
+    id,
+    kor_name,
+    total,
+    CASE
+        WHEN total >= 500 THEN "High"
+        WHEN total BETWEEN 300 AND 500 THEN "Medium"
+    ELSE "Low"
+    END AD total_grade
+FROM basic.pokemon
+WHERE
+    total_grade = "Low"
 
+4. 각 트레이너의 배지개수를 기준으로 5개이하면 Beginner, 6개에서 8개사이 intermediate 그이상 advanced
 
-
-
-4. 
-
+SELECT
+    id,
+    name,
+    badge_count,
+    CASE
+        WHEN badge_count >=9 THEN "Advanced"
+        WHEN badge_count BETWEEN 6 AND 8 THEN "Intermediate"
+    ELSE "Beginner"
+    END AS trainer_level
+FROM basic.trainer
+GROUP BY
+    trainer_level
 
 
 <br>
@@ -161,6 +182,7 @@ ORDER BY
 <br>
 
 ---
+![pic](image/week5.png)
 
 # 확인문제
 
@@ -189,7 +211,11 @@ ORDER BY
 <!-- 틀린쿼리에 대한 오류의 원인도 같이 작성해주세요. 문제에서 제공된 login_data 컬럼은 DATE type의 데이터를 가지고 있다고 가정하시면 됩니다. -->
 
 ~~~
-여기에 답을 작성해주세요!
+SELECT COUNT(*)  
+FROM user_log  
+WHERE login_date = '2021';
+
+DATE타입이라 직접비교할수없어 EXTRACT를 사용해야합니다
 ~~~
 
 
@@ -220,7 +246,9 @@ FROM pokemon;
 <!-- 근거와 함께 답을 작성해주세요 -->
 
 ~~~
-여기에 답을 작성해주세요!
+Pikachu, Bulbasaur
+
+FIRE는 HOT, WATER는 COOL 그외는 NORMAL이므로 NORMAL타입이 출력됨
 ~~~
 
 
