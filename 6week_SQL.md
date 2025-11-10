@@ -55,10 +55,17 @@
 * JOIN에 대한 정의와 필요성에 대해 설명할 수 있다.
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+두 데이터를 연결할 수 있는 공통 컬럼(key)을 통해 다른 데이터테이블을 연결해주는것, 특정범위로도 가능함
+left join의 개념과 유사
+Key = trainer_id, id처럼
+테이블조인의 제한은 없다
+
+테이블의 저장된 형태를 꼭 봐라
 
 
+JOIN의 이유 - 정규화(중복최소화)하도록 데이터 구조화해서 따로따로 있음 그래서 사용할땐 붙여서 사용해야함
 
+데이터분석은 합쳐져있는게 좋고 개발 관점은 분리가 좋음 따라서 최근엔 데이터웨어하우스에서 JOIN을 사용해 데이터마트를 만든다(가공도 할수있음)
 ## 5-3. 다양한 JOIN 방법
 
 ~~~
@@ -67,7 +74,14 @@
 * 각 JOIN 방법들의 차이점에 대해서 설명할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+LEFT JOIN이 가장중요
+A / B 테이블이 있다고 가정했을때
+INNER JOIN은 교집합
+LEFT JOIN은 A테이블 기준으로 B테이블을 붙임
+RIGHT JOIN은 B테이블 기준으로 A를 붙임
+FULL JOIN은 합집합 빈칸은 NULL
+CROSS JOIN은 가능한 경우에수대로 모두 곱해줌 따라서 데이터가 매우많아져 주필요
+
 
 
 
@@ -79,7 +93,20 @@
 * JOIN 을 활용한 쿼리를 작성할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+테이블 확인(데이터) -> 기준 테이블 정의 -> JOIN Key 찾기 -> 결과 예상 -> 쿼리작성/검증
+EX) SELECT
+        A.col1,
+        A.col2,
+        B.col1,
+        B.col2
+    FROM table1 AS A
+    LEFT JOIN table2 AS B
+    ON A.key = B.key
+
+하려는 작업의 목적에 따라 JOIN 선택하기
+LEFT JOIN을 주로 사용하고, 기준이 되는 Table을 왼쪽에 두고 오른쪽에 계속 추가
+컬럼또한 데이터에 필요한정도만 선택하는게 비용을 줄이기 좋다
+ID같은 경우는 unique여부 확인을 위해 갖고다니는걸 추천
 
 
 
@@ -89,8 +116,46 @@
 ✅ 학습 목표 :
 * 연습문제(3문제 이상) 푼 것들 정리하기
 ~~~
+2. 각 트레이너가 가진 포켓몬 중에서 'Grass'타입의 포켓몬 수를 계산해주세요 (type1 기준)
+```sql
+SELECT
+    tp.*,
+    p.type1
+    
+FROM()
+    SELECT
+        id,
+        trainer_id,
+        pokemon_id,
+        status
+    FROM trainer_pokemon
+WHERE
+    status IN("Active", "Training")
+) AS tp
+LEFT JOIN basic.pokemon AS p
+ON tp.pokemon_id = p.id
+WHERE 
+type1 = "Grass"
+GROUP BY
+type1
+ORDER BY
+2 DESC
+```
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+3. 트레이너의 고향과 포켓몬 포획위치 비교해 교향에서 포켓몬 포획트레이너수 계산
+```SQL
+SELECT
+    COUNT(DISTINCT tp.trainer_id) AS trainer_uniq,
+    COUNT(tp.trainer_id) AS trainer_cnt,
+FROM basic.trainer AS t
+LEFT JOIN basic.trainer_pokemon AS tp
+ON t.id = tp.trainer_Id
+WHERE
+    tp.location IS NOT NULL
+    AND t.hometown = tp.location
+
+```
+
 
 
 
@@ -99,6 +164,10 @@
 <br>
 
 ---
+![pic](image/week6.png)
+![pic](image/week6_quiz.png)
+![pic](image/week6_quiz1.png)
+
 
 # 2️⃣ 확인문제 & 문제 인증
 
