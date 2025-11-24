@@ -54,8 +54,13 @@
 * SQL 쿼리를 가독성 있게 작성할 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
-
+SQL스타일 가이드가 있음
+1. 예약어는 대문자로
+2. 컬럼명은 snake or camel case가 있음 디폴트는 snake가 더 좋아보임
+3. 테이블명은 명시적인게 좋다
+4. 왼쪽정렬이 기본
+5. 예약어나 컬럼은 한줄에 하나 권장
+6. 쉼표는 컬럼 바로 뒤에
 
 
 ## 6-3. 가독성을 챙기기 위한 WITH문 & 파티션
@@ -66,7 +71,41 @@
 * WITH문과 파티션을 활용해서도 가독성을 챙길 수 있다. 
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+### 1. 반복되는 쿼리로 인한 문제점
+- 동일한 로직이 여러 곳에 반복되면 **수정 시 모든 부분을 일일이 바꿔야 함**  
+- 중복 코드가 많아질수록 **오류 발생 가능성 증가**  
+- 전체 쿼리가 복잡해져 **가독성 저하**
+
+---
+
+### 2. 해결책: `WITH` 문(CTE) 사용
+반복되는 하위 쿼리를 `WITH` 절로 묶으면 한 번 정의해서 재사용할 수 있음.
+
+### 🔹 장점
+- **가독성 ↑** (쿼리 구조가 깔끔해짐)
+- **유지보수성 ↑** (한 줄만 수정하면 전체 반영)
+- **중복 제거**로 쿼리 길이 감소
+- 복잡한 로직을 단계별로 나눠서 보기 쉬움
+
+---
+
+### 3. 성능 및 비용 관점: `PARTITION BY` 사용
+`PARTITION BY`는 윈도우 함수에서 특정 그룹 기준으로 연산을 수행할 수 있게 함.
+
+- 별도의 서브쿼리를 반복 계산하는 것보다 **탐색 비용절감**
+- 불필요한 조인이나 중첩쿼리를 줄여 **쿼리 성능 향상**
+- 데이터 증가 시에도 관리가 편하고 비용 절감 가능  
+  → 탐색 비용도 결국 돈이다
+
+---
+
+### 4. 요약
+- 반복 로직 많음 → 헷갈림 + 수정 어렵고 오류 증가
+- **WITH(CTE)** 로 공통 로직을 정의해 깔끔하게 재사용
+- **PARTITION BY** 로 성능 최적화 및 탐색 비용 절감
+- 결과적으로 **쿼리 성능↑, 유지보수성↑, 비용↓**
+
+
 
 
 
@@ -78,7 +117,47 @@
 * 데이터 결과 검증에 대한 예시를 이해할 수 있다.  
 ~~~
 
-<!-- 새롭게 배운 내용을 자유롭게 정리해주세요.-->
+# SQL 실수 줄이는 방법 & 검증 절차 정리
+
+## 1. 왜 반복되면 문제가 되는가?
+- 동일 로직을 여러 쿼리에 반복하면 **실수 확률 증가**
+- 한 부분을 수정하면 **모든 반복 구간을 다시 수정해야 함**
+- 참값(True Value)과 예상값(Expected Value)의 불일치가 발생하기 쉬움
+- 특수성(Edge case), 도메인 지식이 충분하지 않으면 오류가 누적됨
+
+---
+
+## 2. 문제 해결의 핵심: “정확한 문제 정의”
+### 문제정의 → Input/Output 설계 → 쿼리 작성 → 결과 검증
+1) **문제정의 (구체적으로)**  
+- 무엇을 계산해야 하는지  
+- 어떤 기준과 조건이 필요한지  
+- 포함/제외 요소 명확히 하기
+
+2) **Input/Output 설계 (중간결과 포함)**  
+- 최종 Output만 보지 말고  
+  “중간 단계 Output은 어떻게 생겨야 하는가?”  
+  를 반드시 미리 정의
+
+3) **쿼리 작성 (가독성 중심)**  
+- WITH 문 사용  
+- 컬럼명 명확히 정의  
+- 중복 계산은 한 번만
+
+4) **결과 비교 및 검증**  
+- 참값 vs 계산값 일치 여부 확인  
+- 예상한 수치와 실제 결과가 맞는지 비교
+
+---
+
+## 3. 쿼리 정확도 높이는 체크리스트
+
+###  COUNT(*)
+- 전체 행 수가 예상과 맞는지 확인  
+- 필터를 걸기 전/후로 비교
+
+###  NOT NULL 체크
+
 
 
 
@@ -89,18 +168,22 @@
 <br>
 
 ---
+![pic](image/week7.png)
 
 # 2️⃣ 확인문제 & 문제 인증
 
 ## 프로그래머스 문제 
+![pic](image/week7_q1.png)
 
 https://school.programmers.co.kr/learn/courses/30/lessons/157343
 
 > 특정 옵션이 포함된 자동차 리스트 구하기
+![pic](image/week7_q2.png)
 
 https://school.programmers.co.kr/learn/courses/30/lessons/59044
 
 > 오랜 기간 보호한 동물(1) 
+![pic](image/week7_q3.png)
 
 https://school.programmers.co.kr/learn/courses/30/lessons/59043
 
@@ -109,10 +192,12 @@ https://school.programmers.co.kr/learn/courses/30/lessons/59043
 
 
 ## LeetCode 문제
+![pic](image/week7_q4.png)
 
 https://leetcode.com/problems/combine-two-tables/description/
 
 > 175. Combine Two Tables
+![pic](image/week7_q5.png)
 
 https://leetcode.com/problems/list-the-products-ordered-in-a-period/
 
@@ -144,7 +229,24 @@ where u.region= 'Busan'			order by o.OrderID
 
 
 ~~~
-여기에 답을 작성해주세요.
+-- 가독성 좋게 정리한 SQL
+
+SELECT 
+    u.name AS user_name,
+    o.OrderID,
+    p.ProductName,
+    od.Quantity,
+    od.UnitPrice
+FROM Users AS u
+    JOIN Orders AS o
+        ON u.id = o.userId
+    JOIN OrderDetails AS od
+        ON o.OrderID = od.orderID
+    JOIN Products AS p
+        ON od.ProductID = p.ProductID
+WHERE u.region = 'Busan'
+ORDER BY o.OrderID;
+
 ~~~
 
 
